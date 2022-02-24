@@ -36,7 +36,7 @@ class DataFrame:
 
 if __name__ == "__main__":
 
-	from line_graph2 import LineGraph
+	from line_graph import LineGraph
 	import statistics
 	
 	class Mean(DataFrame):
