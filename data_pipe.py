@@ -1,10 +1,10 @@
 #DataPipe.py
-from data_frame2 import DataFrame
+from data_frame import DataFrame
 	
 	
 class DataPipe:
 
-	def __init__(self,intervals,df_class = DataFrame):
+	def __init__(self,intervals,df_class=DataFrame):
 	
 		self.intervals = sorted(intervals)
 		
@@ -16,32 +16,18 @@ class DataPipe:
 		
 		#3. Link the DataFrame objects together such that the output of each interval cascased into
 		#	The input of the next
-		is_root = True
-		last = None
+		is_root = True # Needed so we don't try to back-link the first DataFrame in the list
+		last = None # Holds a ref to the previous DataFrame in the list
 		for interval in self.intervals:
 			if is_root:
-				root = self.intervals[interval]
-				is_root = False
+				root = self.intervals[interval] # Will use this below as the entry point to the pipe
+				is_root = False # Subsequent DataFrames can not be the root.
 				last = interval
 				continue
 			else:
-				self.intervals[last].outputs.append(self.intervals[interval].append)
+				self.intervals[last].chain.append(self.intervals[interval].append)
 				self.intervals[interval].step = self.intervals[last].limit
 				last = interval
 				
 		#4. Set the input of the first DataFrame interval as the entry point for the whole chain. 
 		self.append = root.append
-
-
-if __name__ == "__main__":
-#Test code...
-
-	from line_graph2 import LineGraph
-	
-	g = LineGraph()
-	
-	dp = DataPipe({60, 300, 900, 3600, 21600, 86400})
-	dp.intervals[900].outputs.append(print)
-	
-	for _ in range(10000):
-		dp.append(g.nextx())
